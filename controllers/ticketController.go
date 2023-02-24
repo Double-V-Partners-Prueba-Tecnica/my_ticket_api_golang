@@ -63,3 +63,58 @@ func TicketShow(c *gin.Context) {
 		"ticket": ticket,
 	})
 }
+
+func TicketUpdate(c *gin.Context) {
+	// Get ticket id from request
+	id := c.Param("id")
+
+	// Get data from request
+	var body struct {
+		UserId uint
+		Status bool
+	}
+
+	c.Bind(&body)
+
+	// Get ticket
+	var ticket models.Ticket
+
+	initializers.DB.First(&ticket, id)
+
+	// Update ticket
+	ticket.UserID = body.UserId
+	ticket.Status = body.Status
+
+	// Check if ticket was updated
+	result := initializers.DB.Save(&ticket)
+
+	// Return response
+	if result.Error != nil {
+		c.JSON(400, gin.H{
+			"message": "Ticket not updated",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"message": "Ticket updated",
+			"ticket":  ticket,
+		})
+	}
+}
+
+func TicketDelete(c *gin.Context) {
+	// Get ticket id from request
+	id := c.Param("id")
+
+	// Get ticket
+	var ticket models.Ticket
+
+	initializers.DB.First(&ticket, id)
+
+	// Delete ticket
+	initializers.DB.Delete(&ticket)
+
+	// Return response
+	c.JSON(200, gin.H{
+		"message": "Ticket deleted",
+	})
+}

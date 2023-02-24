@@ -61,3 +61,62 @@ func UserShow(c *gin.Context) {
 		"user": user,
 	})
 }
+
+func UserUpdate(c *gin.Context) {
+	// Get user id from request
+	id := c.Param("id")
+
+	// Get data from request
+	var body struct {
+		Username string
+	}
+
+	c.Bind(&body)
+
+	// Get user
+	var user models.User
+
+	initializers.DB.First(&user, id)
+
+	// Update user
+	user.Username = body.Username
+
+	// Check if user was updated
+	result := initializers.DB.Save(&user)
+
+	// Return response
+	if result.Error != nil {
+		c.JSON(400, gin.H{
+			"message": "User not updated",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"message": "User updated",
+			"user":    user,
+		})
+	}
+}
+
+func UserDelete(c *gin.Context) {
+	// Get user id from request
+	id := c.Param("id")
+
+	// Get user
+	var user models.User
+
+	initializers.DB.First(&user, id)
+
+	// Delete user
+	result := initializers.DB.Delete(&user)
+
+	// Return response
+	if result.Error != nil {
+		c.JSON(400, gin.H{
+			"message": "User not deleted",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"message": "User deleted",
+		})
+	}
+}

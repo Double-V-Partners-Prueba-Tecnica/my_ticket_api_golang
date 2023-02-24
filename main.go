@@ -26,5 +26,15 @@ func main() {
 	r.GET("/users", controllers.UserIndex)
 	r.GET("/user/:id", controllers.UserShow)
 
+	// PUT routes
+	r.PUT("/ticket/:id", controllers.TicketUpdate)
+
+	r.PUT("/user/:id", controllers.UserUpdate)
+
+	// DELETE routes
+	r.DELETE("/ticket/:id", controllers.TicketDelete)
+
+	r.DELETE("/user/:id", controllers.UserDelete)
+
 	r.Run()
 }
